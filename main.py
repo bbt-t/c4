@@ -15,11 +15,13 @@ def main():
     border = '-' * (max(len(x) for x in button) + 4)
     menu = "  \n  ".join(button)
 
+
     # где ищем?
     choice = input(
         f"{border}\nгде ищем?\n  {menu} \n{border}\n"
     )
 
+    print("Далее необходимо делать выбор так:\n| 1 - ДА |   | 2 - НЕТ |")
     # что ищем?
     search_query = make_question("что ищем?", border)
 
@@ -57,7 +59,6 @@ def main():
         db_cfg = DBConfig()
         db = storage.Repository(db_cfg)
         db.db.add_vacancy(result)
-
 
 
 if __name__ == '__main__':
