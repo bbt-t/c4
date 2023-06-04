@@ -6,8 +6,11 @@ from jobmatchup import tools
 from jobmatchup import storage
 
 
-def main():
-    # приветствие
+def main() -> None:
+    """
+    Main func for user interaction.
+    """
+    # приветствие:
     print('Привет! Выбери что тебе нужно из списка ниже: ')
 
     # меню
@@ -15,19 +18,20 @@ def main():
     border = '-' * (max(len(x) for x in button) + 4)
     menu = "  \n  ".join(button)
 
-
     # где ищем?
     choice = input(
         f"{border}\nгде ищем?\n  {menu} \n{border}\n"
     )
 
+    # как нужно делать выбор:
     print("Далее необходимо делать выбор так:\n| 1 - ДА |   | 2 - НЕТ |")
+
     # что ищем?
     search_query = make_question("что ищем?", border)
 
     # сколько ищем?
     if not (amt := make_question("сколько?", border)).isdecimal():
-        raise ValueError
+        raise ValueError("! should be integer !")
 
     match choice:
         case '1':
@@ -57,8 +61,9 @@ def main():
     is_save_to_file = string_to_bool(make_question("сохранить в файл?", border))
     if is_save_to_file:
         db_cfg = DBConfig()
-        db = storage.Repository(db_cfg)
-        db.db.add_vacancy(result)
+        repo = storage.Repository(db_cfg)
+
+        repo.db.add_vacancy(result)
 
 
 if __name__ == '__main__':
