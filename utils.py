@@ -28,3 +28,24 @@ def string_to_bool(choice: str) -> bool:
         raise ValueError("нужно ввести или 1 - если ДА или 2 - НЕТ")
 
     return result
+
+
+def make_skin_question() -> tuple[str, str]:
+    """
+    Make 'menu'.
+    :return: strings for design
+    """
+    button = '1: hh.ru', '2: superjob.ru', '3: со всех сразу!'
+    border = '-' * (max(len(x) for x in button) + 4)
+    menu = "  \n  ".join(button)
+    return border, menu
+
+
+def has_answer(param: str, msg, border) -> bool:
+    """
+    DRY!
+    :return: bool or ValueError
+    """
+    if not param:
+        return string_to_bool(make_question(msg, border))
+    return string_to_bool(param)

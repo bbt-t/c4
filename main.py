@@ -1,69 +1,82 @@
-from utils import make_question, string_to_bool
+from utils import make_question, make_skin_question, has_answer
 
+from click import command, option
 from jobmatchup.api import Query
 from jobmatchup.configs import Config, DBConfig
-from jobmatchup import tools
-from jobmatchup import storage
+from jobmatchup.tools import sort_vacancies_by_salary, show_vacancies
+from jobmatchup.storage import Repository
 
 
-def main() -> None:
+# add CLI commands
+@command()
+@option("--choice", default="", help="где ищем? (1: hh.ru 2: superjob.ru 3: со всех сразу!)")
+@option("--query", default="", help="что ищем?")
+@option("--amt", default="", help="сколько?")
+@option("--async_req", default="", help="использовать асинхронный запрос? работает только если выбрать > 1 сайта!")
+@option("--sort", default="", help="отфильтровать по ЗП?")
+@option("--save", default="", help="сохранить в файл?")
+def main(choice, query, amt, async_req, sort, save) -> None:
     """
     Main func for user interaction.
     """
+
     # приветствие:
     print('Привет! Выбери что тебе нужно из списка ниже: ')
 
     # меню
-    button = '1: hh.ru', '2: superjob.ru', '3: со всех сразу!'
-    border = '-' * (max(len(x) for x in button) + 4)
-    menu = "  \n  ".join(button)
+    border, menu = make_skin_question()
 
     # где ищем?
-    choice = input(
-        f"{border}\nгде ищем?\n  {menu} \n{border}\n"
-    )
+    if not choice:
+        choice = input(f"{border}\nгде ищем?\n  {menu} \n{border}\n")
 
     # как нужно делать выбор:
     print("Далее необходимо делать выбор так:\n| 1 - ДА |   | 2 - НЕТ |")
 
     # что ищем?
-    search_query = make_question("что ищем?", border)
+    if not query:
+        query = make_question("что ищем?", border)
 
     # сколько ищем?
-    if not (amt := make_question("сколько?", border)).isdecimal():
+    if not amt:
+        amt = make_question("сколько?", border)
+    if not amt.isdecimal():
         raise ValueError("! should be integer !")
 
-    match choice:
-        case '1':
-            cfg = Config(without_auth=True)
-            result = Query(cfg, search_query, int(amt)).get_hh()
-        case '2':
-            cfg = Config(without_auth=False, from_env=True)
-            result = Query(cfg, search_query, int(amt)).get_sj()
-        case '3':
-            is_async: bool = string_to_bool(input("увеличим скорость?)"))
-
-            cfg = Config(without_auth=False)
-            result = Query(cfg, search_query, int(amt), async_work=is_async)
-
-    # отфильтровать по ЗП?
-    is_filter = string_to_bool(make_question("отфильтровать по ЗП?", border))
-    if is_filter:
-        filter_word = input('введи слово для фильтрации')
-        result = tools.filter_vacancies(result, filter_word)
+    # делаем запрос:
+    try:
+        match choice:
+            case '1':
+                cfg = Config(without_auth=True)
+                result = Query(cfg, query, int(amt)).get_hh()
+            case '2':
+                cfg = Config(without_auth=False, from_env=True)
+                result = Query(cfg, query, int(amt)).get_sj()
+            case '3':
+                cfg = Config(without_auth=False)
+                result = Query(
+                    cfg,
+                    query,
+                    int(amt),
+                    async_work=has_answer(async_req, "увеличим скорость?)", border),
+                )
+    except TypeError:
+        print("! Ничего не найдено !")
+        return
 
     # отсортировать?
-    is_sort = string_to_bool(make_question("сортируем?", border))
-    if is_sort:
-        result = tools.sort_vacancies_by_salary(result)
+    if has_answer(sort, "сортируем?", border):
+        result = sort_vacancies_by_salary(result)
 
     # сохранить?
-    is_save_to_file = string_to_bool(make_question("сохранить в файл?", border))
-    if is_save_to_file:
+    if has_answer(save, "сохранить в файл?", border):
         db_cfg = DBConfig()
-        repo = storage.Repository(db_cfg)
+        repo = Repository(db_cfg)
 
         repo.db.add_vacancy(result)
+
+    # вывод:
+    show_vacancies(result)
 
 
 if __name__ == '__main__':
