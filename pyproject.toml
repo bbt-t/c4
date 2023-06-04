@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "c4"
 version = "0.1.0"
-description = ""
+description = "'Курсовое' задание блока №4 Skypro"
 authors = ["bbt-t <zlukcss@gmail.com>"]
 readme = "README.md"
 
