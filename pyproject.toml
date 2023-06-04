@@ -2,7 +2,7 @@
 name = "c4"
 version = "0.1.0"
 description = ""
-authors = ["dude <zlukcss@gmail.com>"]
+authors = ["bbt-t <zlukcss@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
