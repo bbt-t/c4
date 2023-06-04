@@ -19,7 +19,6 @@ def main(choice, query, amt, async_req, sort, save) -> None:
     """
     Main func for user interaction.
     """
-
     # приветствие:
     print('Привет! Выбери что тебе нужно из списка ниже: ')
 
