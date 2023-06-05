@@ -23,7 +23,7 @@
 <details> 
   <summary><b>CLI</b></summary>
 
-`Win -> python main.py ПАРАМЕТРЫ`
+`Win -> python main.py ОПЦИИ`
 
 `Linux -> python3 main.py ОПЦИИ`
 
