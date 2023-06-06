@@ -9,10 +9,16 @@ from jobmatchup.storage import Repository
 
 # add CLI commands
 @command()
-@option("--choice", default="", help="где ищем? (1: hh.ru 2: superjob.ru 3: со всех сразу!)")
+@option(
+    "--choice", default="", help="где ищем? (1: hh.ru 2: superjob.ru 3: со всех сразу!)"
+)
 @option("--query", default="", help="что ищем?")
 @option("--amt", default="", help="сколько?")
-@option("--async_req", default="", help="использовать асинхронный запрос? работает только если выбрать > 1 сайта!")
+@option(
+    "--async_req",
+    default="",
+    help="использовать асинхронный запрос? работает только если выбрать > 1 сайта!",
+)
 @option("--sort", default="", help="отфильтровать по ЗП?")
 @option("--save", default="", help="сохранить в файл?")
 def main(choice, query, amt, async_req, sort, save) -> None:
@@ -20,7 +26,7 @@ def main(choice, query, amt, async_req, sort, save) -> None:
     Main func for user interaction.
     """
     # приветствие:
-    print('Привет! Выбери что тебе нужно из списка ниже: ')
+    print("Привет! Выбери что тебе нужно из списка ниже: ")
 
     # меню
     border, menu = make_skin_question()
@@ -45,13 +51,13 @@ def main(choice, query, amt, async_req, sort, save) -> None:
     # делаем запрос:
     try:
         match choice:
-            case '1':
+            case "1":
                 cfg = Config(without_auth=True)
                 result = Query(cfg, query, int(amt)).get_hh()
-            case '2':
+            case "2":
                 cfg = Config(without_auth=False, from_env=True)
                 result = Query(cfg, query, int(amt)).get_sj()
-            case '3':
+            case "3":
                 cfg = Config(without_auth=False)
                 result = Query(
                     cfg,
@@ -78,5 +84,5 @@ def main(choice, query, amt, async_req, sort, save) -> None:
     show_vacancies(result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
