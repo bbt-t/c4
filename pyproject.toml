@@ -7,8 +7,8 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-jobmatchup = "^0.3.2"
 click = "^8.1.3"
+jobmatchup = "^0.3.2"
 
 
 [tool.poetry.group.dev.dependencies]
